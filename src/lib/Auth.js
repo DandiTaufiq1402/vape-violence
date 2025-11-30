@@ -1,3 +1,5 @@
+// src/lib/Auth.js
+
 import { supabase } from "./supabase";
 
 export async function getCurrentUser() {
@@ -9,7 +11,8 @@ export async function getProfile() {
   const user = (await supabase.auth.getUser()).data.user;
   if (!user) return null;
   const { data: profile } = await supabase
-    .from("profiles")
+    // PERBAIKAN: Ganti "profiles" menjadi "users"
+    .from("users")
     .select("*")
     .eq("id", user.id)
     .single();

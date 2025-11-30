@@ -1,4 +1,8 @@
+// src/router/index.js
+
 import { createRouter, createWebHistory } from "vue-router";
+// 1. IMPORT FUNGSI AUTENTIKASI DAN ROLE
+import { isAdmin, getCurrentUser } from "../lib/Auth";
 
 import Home from "../views/Home.vue";
 import ProductDetail from "../views/ProductDetail.vue";
@@ -14,18 +18,79 @@ import AdminAddEdit from "../views/Admin/AddEditProduct.vue";
 const routes = [
   { path: "/", component: Home },
   { path: "/product/:id", component: ProductDetail },
-  { path: "/cart", component: Cart },
+
+  // 2. TAMBAHKAN META FIELD UNTUK RUTE CUSTOMER (Membutuhkan Login)
+  { path: "/cart", component: Cart, meta: { requiresAuth: true } },
+
   { path: "/login", component: Login },
   { path: "/register", component: Register },
 
-  // Admin
-  { path: "/admin", component: AdminDashboard },
-  { path: "/admin/products", component: AdminProducts },
-  { path: "/admin/products/add", component: AdminAddEdit },
-  { path: "/admin/products/:id/edit", component: AdminAddEdit },
+  // 3. TAMBAHKAN META FIELD UNTUK RUTE ADMIN (Membutuhkan Login DAN Role Admin)
+  {
+    path: "/admin",
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/admin/products",
+    component: AdminProducts,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/admin/products/add",
+    component: AdminAddEdit,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/admin/products/:id/edit",
+    component: AdminAddEdit,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
 ];
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+// 4. IMPLEMENTASI GLOBAL NAVIGATION GUARD
+router.beforeEach(async (to, from, next) => {
+  // Cek status pengguna saat ini
+  const user = await getCurrentUser();
+  const isAuthenticated = !!user;
+
+  // Proteksi Rute Admin
+  if (to.meta.requiresAdmin) {
+    const isUserAdmin = await isAdmin();
+
+    if (isUserAdmin) {
+      next();
+    } else if (isAuthenticated) {
+      // Login, tapi bukan Admin
+      alert("Akses ditolak. Anda tidak memiliki izin Admin.");
+      next("/");
+    } else {
+      // Belum Login
+      alert("Akses ditolak. Anda harus login sebagai Admin.");
+      next("/login");
+    }
+  }
+
+  // Proteksi Rute Customer (Membutuhkan Login)
+  else if (to.meta.requiresAuth) {
+    if (isAuthenticated) {
+      next();
+    } else {
+      // Belum Login
+      alert("Anda perlu login untuk mengakses halaman ini.");
+      next("/login");
+    }
+  }
+
+  // Rute Publik
+  else {
+    next();
+  }
+});
+
+export default router;
