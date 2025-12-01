@@ -1,3 +1,5 @@
+/* danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829ba4f/src/router/index.js */
+
 // src/router/index.js
 
 import { createRouter, createWebHistory } from "vue-router";
@@ -5,10 +7,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import { isAdmin, getCurrentUser } from "../lib/Auth";
 
 import Home from "../views/Home.vue";
-import ProductDetail from "../views/ProductDetail.vue";
+// Ganti import ProductDetail menjadi ProductList
+import ProductList from "../views/ProductDetail.vue"; // Menggunakan ProductDetail.vue sebagai Product List
 import Cart from "../views/Cart.vue";
 import Login from "../views/Auth/Login.vue";
 import Register from "../views/Auth/Register.vue";
+import Testimonials from "../views/Testimonials.vue"; // <-- Import Testimonials
+import Profile from "../views/Profile.vue";
+import Contact from "../views/Contact.vue";
 
 // Admin
 import AdminDashboard from "../views/Admin/Dashboard.vue";
@@ -17,10 +23,14 @@ import AdminAddEdit from "../views/Admin/AddEditProduct.vue";
 
 const routes = [
   { path: "/", component: Home },
-  { path: "/product/:id", component: ProductDetail },
+  // Menggunakan rute produk sebagai daftar produk
+  { path: "/product/:id", component: ProductList },
+  { path: "/testimonials", component: Testimonials },
+  { path: "/contact", component: Contact }, // <-- Rute Baru
 
   // 2. TAMBAHKAN META FIELD UNTUK RUTE CUSTOMER (Membutuhkan Login)
   { path: "/cart", component: Cart, meta: { requiresAuth: true } },
+  { path: "/profile", component: Profile, meta: { requiresAuth: true } },
 
   { path: "/login", component: Login },
   { path: "/register", component: Register },
