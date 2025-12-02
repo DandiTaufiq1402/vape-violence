@@ -1,117 +1,35 @@
-<template>
-  <div class="flex items-center justify-center min-h-[calc(100vh-64px)] p-6">
-    <div
-      class="w-full max-w-md bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700"
-    >
-      <h1 class="text-3xl font-extrabold text-white text-center mb-6">
-        Buat Akun Baru
-      </h1>
+// src/views/Auth/Register.vue (Contoh)
 
-      <form @submit.prevent="registerUser">
-        <div class="mb-4">
-          <label for="name" class="block text-sm font-medium text-gray-400 mb-1"
-            >Nama Lengkap</label
-          >
-          <input
-            id="name"
-            v-model="name"
-            type="text"
-            placeholder="Masukkan nama lengkap Anda"
-            class="input bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-yellow-500 focus:ring-yellow-500 p-3"
-            required
-          />
-        </div>
+<script setup>
+// ... (imports lainnya)
+import { supabase } from "../../lib/supabase"; // Pastikan ini diimpor
+import { initializeNewUser } from "../../lib/Auth"; // Import fungsi baru
 
-        <div class="mb-4">
-          <label
-            for="email"
-            class="block text-sm font-medium text-gray-400 mb-1"
-            >Email</label
-          >
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            placeholder="Masukkan email Anda"
-            class="input bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-yellow-500 focus:ring-yellow-500 p-3"
-            required
-          />
-        </div>
+const form = reactive({
+  email: "",
+  password: "",
+  full_name: "", // Pastikan Anda juga mengumpulkan nama lengkap
+});
 
-        <div class="mb-6">
-          <label
-            for="password"
-            class="block text-sm font-medium text-gray-400 mb-1"
-            >Password</label
-          >
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            placeholder="Buat password (min. 6 karakter)"
-            class="input bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-yellow-500 focus:ring-yellow-500 p-3"
-            required
-          />
-        </div>
+// ...
 
-        <button
-          type="submit"
-          class="bg-yellow-500 text-gray-900 font-bold py-3 rounded-lg w-full shadow-lg shadow-yellow-500/30 hover:bg-yellow-600 transition duration-300 transform hover:scale-[1.01]"
-        >
-          Daftar
-        </button>
-      </form>
+const handleRegister = async () => {
+  // ... (validasi)
 
-      <p class="text-center text-gray-400 mt-6 text-sm">
-        Sudah punya akun?
-        <router-link
-          to="/login"
-          class="text-yellow-400 font-semibold hover:text-yellow-300 transition"
-        >
-          Masuk di sini
-        </router-link>
-      </p>
-    </div>
-  </div>
-</template>
+  const { data, error } = await supabase.auth.signUp({
+    email: form.email,
+    password: form.password,
+  });
 
-<script>
-// Impor Supabase
-import { supabase } from "../../lib/supabase";
+  if (error) {
+    alert(error.message);
+  } else if (data.user) {
+    // PENTING: Inisialisasi role di tabel public.users setelah sukses
+    await initializeNewUser(data.user.id, form.full_name);
 
-export default {
-  name: "Register",
-  data() {
-    return {
-      name: "", // Kita akan menggunakan ini untuk mengisi full_name di tabel users
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    async registerUser() {
-      // Panggil Supabase signUp
-      const { data, error } = await supabase.auth.signUp({
-        email: this.email,
-        password: this.password,
-        options: {
-          data: { full_name: this.name }, // Mengirim nama sebagai metadata
-        },
-      });
-
-      if (error) {
-        alert("Gagal mendaftar: " + error.message);
-      } else {
-        alert("Pendaftaran Berhasil! Silakan Login.");
-        this.$router.push("/login");
-      }
-    },
-  },
+    alert("Registrasi berhasil! Silakan cek email Anda untuk verifikasi.");
+    // ... (redirect)
+  }
 };
+// ...
 </script>
-
-<style scoped>
-.input {
-  @apply w-full border rounded mt-2;
-}
-</style>
