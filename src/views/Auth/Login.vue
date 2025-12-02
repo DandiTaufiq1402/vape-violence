@@ -88,9 +88,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.input {
-  @apply w-full border rounded mt-2;
-}
-</style>
