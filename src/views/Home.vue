@@ -105,11 +105,20 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
             class="bg-gray-900 p-4 rounded-xl border border-gray-800 shadow-lg"
           >
             <div class="flex items-center mb-3">
-              <img
-                :src="t.avatar"
-                alt="Avatar"
-                class="w-12 h-12 rounded-full object-cover mr-4 border-2 border-cyan-500"
-              />
+              <svg
+                class="w-12 h-12 text-cyan-400 mr-4 border-2 border-cyan-500 rounded-full p-2 bg-gray-700"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                ></path>
+              </svg>
               <div>
                 <h3 class="font-bold text-lg text-white">{{ t.name }}</h3>
                 <p class="text-sm text-yellow-500">{{ t.role }}</p>
@@ -186,7 +195,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
         <div class="text-center mb-8">
           <p class="text-white text-lg font-bold">
             <span class="mr-2">🚚</span> Gratis Ongkir untuk pembelian di atas
-            Rp 999.000
+            Rp 1.000.000
           </p>
           <p class="text-gray-400 text-sm">
             Berlaku di seluruh daerah Jabodetabek
@@ -227,7 +236,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
         </div>
 
         <p class="text-gray-500 text-sm mt-4">
-          &copy; Copyright 2025, All Rights Reserved by Felan Ardenta Yoga A.
+          &copy; Copyright 2025, All Rights Reserved by Dandi Taufiq.
         </p>
       </div>
     </footer>
@@ -238,126 +247,60 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
 import { ref, onMounted, computed } from "vue";
 import { supabase } from "../lib/supabase";
 
-// Data Dummy produk (dibiarkan seperti sebelumnya untuk demo)
-const DUMMY_PRODUCTS = [
-  {
-    id: 1,
-    name: "Alpha Mod Pro 2.0",
-    price: 650000,
-    image_url: "/img/vape1.jpg",
-    type: "Vape Mod",
-  },
-  {
-    id: 2,
-    name: "Cosmic Citrus Liquid",
-    price: 120000,
-    image_url: "/img/liquid1.jpg",
-    type: "Liquid Freebase",
-  },
-  {
-    id: 3,
-    name: "Vaporizer Max Pod Kit",
-    price: 300000,
-    image_url: "/img/vape2.jpg",
-    type: "Vape Pod",
-  },
-  {
-    id: 4,
-    name: "Mint Freeze Saltnic",
-    price: 110000,
-    image_url: "/img/liquid2.jpg",
-    type: "Liquid Saltnic",
-  },
-  {
-    id: 5,
-    name: "Revolver Tank RTA",
-    price: 250000,
-    image_url: "/img/tank1.jpg",
-    type: "Atomizer",
-  },
-  {
-    id: 6,
-    name: "Strawberry Jam Freebase",
-    price: 135000,
-    image_url: "/img/liquid3.jpg",
-    type: "Liquid Freebase",
-  },
-  {
-    id: 7,
-    name: "Cyberpunk 2077 Mod",
-    price: 880000,
-    image_url: "/img/vape3.jpg",
-    type: "Vape Mod",
-  },
-  {
-    id: 8,
-    name: "Grape Bubblegum Salt",
-    price: 125000,
-    image_url: "/img/liquid4.jpg",
-    type: "Liquid Saltnic",
-  },
-  {
-    id: 9,
-    name: "Nano Mini Kit",
-    price: 350000,
-    image_url: "/img/vape4.jpg",
-    type: "Vape Pod",
-  },
-  {
-    id: 10,
-    name: "Vanilla Custard Freebase",
-    price: 140000,
-    image_url: "/img/liquid5.jpg",
-    type: "Liquid Freebase",
-  },
-];
-
+// TESTIMONIALS (tetap sama)
 const DUMMY_TESTIMONIALS = [
   {
-    name: "Dandi Jenyong Hama",
-    role: "Gold Lane",
-    avatar: "/img/avatar1.jpg",
+    name: "Dandi Taufiq",
+    role: "Tester",
     testimony:
-      "Rasa liquid Red Velvet ini *smooth* banget, cocok buat *vaping* harian. Tidak membuat coil cepat gosong. Benar-benar *premium*!",
+      "Rasa liquid Red Velvet ini *smooth* banget, cocok buat *vaping* harian.",
   },
   {
     name: "Felan Ardenta Yoga Adiyatama",
-    role: "EXP Lane",
-    avatar: "/img/avatar2.jpg",
+    role: "Tester",
     testimony:
-      "Mod Centaurus Edisi Khusus ini desainnya keren parah! Chipsetnya responsif, powernya stabil, dan baterainya awet seharian. *Highly recommended*.",
+      "Mod Centaurus Edisi Khusus ini desainnya keren parah! Chipsetnya responsif.",
   },
   {
     name: "Evan Alpha Edison",
-    role: "Mid Lane",
-    avatar: "/img/avatar3.jpg",
+    role: "Tester",
     testimony:
-      "Cotton Bacon-nya memang beda, kapas menyerap liquid cepat dan tidak ada rasa aneh. Uap yang dihasilkan tebal dan bersih.",
+      "Cotton Bacon-nya memang beda, kapas menyerap liquid cepat dan bersih.",
   },
   {
-    name: "Vargas Kopling",
-    role: "Gold Lane",
-    avatar: "/img/avatar4.jpg",
+    name: "Vargas Cahyadi",
+    role: "Tester",
     testimony:
-      "Liquid Salt Nic Mint Freeze ini dinginnya pas banget! Cocok buat yang suka sensasi *fresh* dan *throat hit* yang halus. Tidak bikin eneg.",
+      "Liquid Salt Nic Mint Freeze ini dinginnya pas banget! Fresh dan smooth.",
   },
 ];
 
 const limitedTestimonials = computed(() => DUMMY_TESTIMONIALS.slice(0, 3));
 
-const products = ref(DUMMY_PRODUCTS);
+// DATA PRODUK DARI SUPABASE
+const products = ref([]);
 
 onMounted(async () => {
-  // Logic Supabase dipertahankan, namun menggunakan data dummy untuk demo styling
-  products.value = DUMMY_PRODUCTS;
+  const { data, error } = await supabase
+    .from("products")                // TABEL PRODUK KAMU
+    .select("*")
+    .order("created_at", { ascending: false }) // SORT NEWEST FIRST
+    .limit(10);                               // LIMIT 10
+
+  if (error) {
+    console.error("Gagal ambil produk:", error);
+    return;
+  }
+
+  products.value = data;
 });
 
-// Fungsi dummy untuk form kontak
+// Fungsi dummy form
 const submitContact = () => {
   alert("Pesan Anda berhasil dikirim!");
-  // Di sini Anda akan menambahkan logika untuk mengirim data ke Supabase atau API lainnya.
 };
 </script>
+
 
 <style scoped>
 /* Tambahan styling untuk memastikan input di Contact section terlihat benar di tema gelap */

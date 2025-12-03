@@ -66,22 +66,41 @@ import { supabase } from "../../lib/supabase"; // Perbaikan path dan impor Supab
 
 export default {
   name: "Login",
+
   data() {
     return { email: "", password: "" };
   },
   methods: {
     async login() {
-      // Logika login Supabase yang sebenarnya
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: this.email,
         password: this.password,
       });
 
       if (error) {
         alert("Login Gagal: " + error.message);
+        return;
+      }
+
+      const user = data.user;
+
+      // Ambil role dari tabel public.users
+      const { data: profile, error: profileError } = await supabase
+        .from("users")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError) {
+        alert("Gagal mengambil data role user!");
+        console.error(profileError);
+        return;
+      }
+
+      // Redirect berdasarkan role
+      if (profile.role === "admin") {
+        this.$router.push("/admin");
       } else {
-        alert("Login Berhasil!");
-        // Setelah berhasil, arahkan ke halaman utama atau dashboard admin
         this.$router.push("/");
       }
     },

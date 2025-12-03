@@ -271,27 +271,23 @@ export default {
       showPaymentPopup: false,
       showSuccessPopup: false,
       paymentMethod: "",
-      // Data Dummy untuk Cart
-      items: [
-        {
-          id: 1,
-          name: "Centaurus M200",
-          qty: 1,
-          price: 899000,
-          image: "/img/centaurus_mod.jpg", // Placeholder
-        },
-        {
-          id: 2,
-          name: "Blueberry Salt Nic",
-          qty: 1,
-          price: 129000,
-          image: "/img/blueberry_liquid.jpg", // Placeholder
-        },
-      ],
-      voucherDiscount: 0, // Simulasi diskon voucher
+      // Hapus data dummy, items akan diisi dari localStorage saat mounted
+      items: [],
+      voucherDiscount: 0,
       freeShippingThreshold: 999000,
       baseShippingFee: 18900,
     };
+  },
+  mounted() {
+    // Muat data keranjang dari localStorage saat komponen dimuat
+    this.loadCartFromStorage();
+
+    // Tambahkan event listener untuk mendengarkan perubahan pada localStorage dari tab lain
+    window.addEventListener("storage", this.handleStorageChange);
+  },
+  beforeUnmount() {
+    // Hapus event listener saat komponen dihancurkan
+    window.removeEventListener("storage", this.handleStorageChange);
   },
   computed: {
     subtotal() {
@@ -308,12 +304,29 @@ export default {
     },
   },
   methods: {
+    loadCartFromStorage() {
+      const cartString = localStorage.getItem("user_cart");
+      this.items = cartString ? JSON.parse(cartString) : [];
+      // Jika keranjang kosong dan sedang di langkah summary, kembali ke cart
+      if (!this.items.length && this.step === "summary") {
+        this.step = "cart";
+      }
+    },
+    saveCartToStorage() {
+      localStorage.setItem("user_cart", JSON.stringify(this.items));
+    },
+    handleStorageChange(event) {
+      if (event.key === "user_cart") {
+        this.loadCartFromStorage();
+      }
+    },
     // Fungsi untuk menambah/mengurangi kuantitas
     changeQuantity(index, delta) {
       const item = this.items[index];
       const newQty = item.qty + delta;
       if (newQty >= 1) {
         this.items[index].qty = newQty;
+        this.saveCartToStorage(); // Simpan perubahan
       }
     },
     // Fungsi untuk menghapus item
@@ -324,6 +337,8 @@ export default {
         )
       ) {
         this.items.splice(index, 1);
+        this.saveCartToStorage(); // Simpan perubahan
+
         // Jika menghapus item membuat keranjang kosong dan sedang di langkah summary, kembali ke cart
         if (!this.items.length && this.step === "summary") {
           this.step = "cart";
@@ -342,13 +357,14 @@ export default {
     resetCart() {
       this.showSuccessPopup = false;
       this.step = "cart";
-      this.items = []; // Kosongkan keranjang
+      this.items = []; // Kosongkan keranjang di state
+      localStorage.removeItem("user_cart"); // Kosongkan keranjang di storage
       this.$router.push("/");
     },
   },
 };
 </script>
-
+  
 <style scoped>
 .input-qty {
   /* Menyesuaikan input agar terlihat bagus di dark mode */

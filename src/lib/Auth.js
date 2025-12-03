@@ -1,48 +1,51 @@
 // src/lib/Auth.js
-
 import { supabase } from "./supabase";
 
-// Mendapatkan data user yang sedang login, termasuk role dari tabel public.users.
+// Mendapatkan data user + role dari tabel public.users
 export async function getCurrentUser() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+
+  console.log("Auth Error:", authError);
+  console.log("Auth Data:", authData);
+
+  const user = authData?.user;
 
   if (!user) {
+    console.log("Tidak ada user login.");
     return null;
   }
 
-  // Ambil data profile dari tabel users, termasuk role
-  const { data: profile, error } = await supabase
+  console.log("User ID dari Auth:", user.id);
+
+  // Ambil profile
+  const { data: profile, error: profileError } = await supabase
     .from("users")
-    .select("id, full_name, role")
+    .select("*")
     .eq("id", user.id)
     .single();
 
-  if (error) {
-    console.error("Error fetching user profile:", error);
-    return { ...user, role: "customer" };
-  }
+  console.log("Profile Data:", profile);
+  console.log("Profile Error:", profileError);
 
-  return {
-    ...user,
-    ...profile,
-  };
+  if (profileError) return null;
+
+  return { ...user, ...profile };
 }
 
-// Mengecek apakah user yang sedang login memiliki role 'admin'.
+
+// Mengecek apakah user admin
 export async function isAdmin() {
   const user = await getCurrentUser();
-  return user && user.role === "admin";
+  return user?.role === "admin";
 }
 
-// Fungsi tambahan untuk inisiasi user baru setelah register
+// Membuat data user baru setelah register
 export async function initializeNewUser(authUserId, fullName) {
   const { error } = await supabase.from("users").insert([
     {
       id: authUserId,
       full_name: fullName,
-      role: "customer", // Role default selalu 'customer' saat registrasi
+      role: "customer", // default role
     },
   ]);
 

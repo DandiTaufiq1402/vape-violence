@@ -74,6 +74,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
           </p>
 
           <button
+            @click="addToCart(p)"
             class="w-full bg-gray-800 text-white border border-gray-700 py-2 rounded-lg font-semibold mb-2 hover:bg-gray-700 transition"
           >
             Tambah Produk
@@ -106,69 +107,70 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
 </template>
 
 <script>
+import { supabase } from "../lib/supabase"; // sesuaikan path kalau beda
+
 export default {
   name: "ProductList",
   data() {
     return {
       filter: "All",
-      // Data Produk Dummy yang disesuaikan untuk tampilan Product List
-      productsData: [
-        {
-          id: 1,
-          name: "Centaurus M200",
-          price: 899000,
-          image: "/img/vape-centaurus.jpg",
-          category: "Device",
-          ratingCount: 39,
-        },
-        {
-          id: 2,
-          name: "Liquid Sop Buah",
-          price: 129000,
-          image: "/img/liquid-sopbuah.jpg",
-          category: "Liquid",
-          ratingCount: 23,
-        },
-        {
-          id: 3,
-          name: "Hexom V3",
-          price: 2999000,
-          image: "/img/vape-hexom.jpg",
-          category: "Device",
-          ratingCount: 21,
-        },
-        {
-          id: 4,
-          name: "Cotton Bacon",
-          price: 59000,
-          image: "/img/accessories-cotton.jpg",
-          category: "Accesories",
-          ratingCount: 13,
-        },
-        {
-          id: 5,
-          name: "Liquid Melon Milk",
-          price: 135000,
-          image: "/img/liquid-melon.jpg",
-          category: "Liquid",
-          ratingCount: 45,
-        },
-        {
-          id: 6,
-          name: "Pod System X1",
-          price: 350000,
-          image: "/img/vape-pod.jpg",
-          category: "Device",
-          ratingCount: 18,
-        },
-      ],
+      productsData: [], // dari supabase
     };
   },
+
+  async mounted() {
+    await this.loadProducts();
+  },
+
+  methods: {
+    async loadProducts() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) {
+        console.error("Gagal mengambil produk:", error.message);
+        return;
+      }
+
+      // Sesuaikan field agar cocok dengan UI kamu
+      this.productsData = data.map((p) => ({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        image: p.image_url, // ← Ambil dari Supabase Storage
+        category: p.category || "Device", // pastikan punya kolom category
+        ratingCount: p.rating || 0, // kalau mau
+      }));
+    },
+
+    addToCart(product) {
+      const cartString = localStorage.getItem("user_cart");
+      let cart = cartString ? JSON.parse(cartString) : [];
+
+      const existingItem = cart.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        existingItem.qty += 1;
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          qty: 1,
+        });
+      }
+
+      localStorage.setItem("user_cart", JSON.stringify(cart));
+      alert(`${product.name} telah ditambahkan ke keranjang!`);
+    },
+  },
+
   computed: {
     filteredProducts() {
-      if (this.filter === "All") {
-        return this.productsData;
-      }
+      if (this.filter === "All") return this.productsData;
       return this.productsData.filter((p) => p.category === this.filter);
     },
   },
