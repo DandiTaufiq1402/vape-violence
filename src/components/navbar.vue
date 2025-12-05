@@ -27,11 +27,19 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
       <router-link to="/testimonials" class="hover:text-yellow-500 transition"
         >Testimonials</router-link
       >
+
+      <router-link
+        v-if="isAdminUser"
+        to="/admin"
+        class="bg-red-500 text-white px-3 py-1 rounded text-sm font-semibold hover:bg-red-600 transition"
+      >
+        Admin Dashboard
+      </router-link>
     </div>
 
     <div class="flex gap-6 items-center">
       <router-link
-        v-if="isAuthenticated"
+        v-if="isAuthenticated && !isAdminUser"
         to="/cart"
         class="hover:text-yellow-500 transition"
       >
@@ -52,7 +60,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
       </router-link>
 
       <router-link
-        v-if="isAuthenticated"
+        v-if="isAuthenticated && !isAdminUser"
         to="/profile"
         class="hover:text-yellow-500 transition"
       >
@@ -104,14 +112,14 @@ import { supabase } from "../lib/supabase";
 const router = useRouter();
 
 const isAuthenticated = ref(false);
-const isAdminUser = ref(false);
+const isAdminUser = ref(false); // <--- DEKLARASI ADMIN STATUS
 
 const updateAuthStatus = async () => {
   const user = await getCurrentUser();
   isAuthenticated.value = !!user;
 
   if (isAuthenticated.value) {
-    isAdminUser.value = await isAdmin();
+    isAdminUser.value = await isAdmin(); // <--- UPDATE ADMIN STATUS
   } else {
     isAdminUser.value = false;
   }
