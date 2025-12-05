@@ -4,11 +4,11 @@ import { createRouter, createWebHistory } from "vue-router";
 import { isAdmin, getCurrentUser } from "../lib/Auth";
 
 import Home from "../views/Home.vue";
-import ProductList from "../views/ProductDetail.vue";
+import ProductDetail from "../views/ProductDetail.vue";
 import Cart from "../views/Cart.vue";
 import Login from "../views/Auth/Login.vue";
 import Register from "../views/Auth/Register.vue";
-import Testimonials from "../views/Testimonials.vue";
+import Testimonials from "../views/Testimonials.vue"; // Customer Testimonials/History
 import Profile from "../views/Profile.vue";
 import Contact from "../views/Contact.vue";
 
@@ -16,15 +16,16 @@ import Contact from "../views/Contact.vue";
 import AdminDashboard from "../views/Admin/Dashboard.vue";
 import AdminProducts from "../views/Admin/Products.vue";
 import AdminAddEdit from "../views/Admin/AddEditProduct.vue";
-import AdminOrders from "../views/Admin/Orders.vue"; // FILE BARU: Import Orders
-import AdminUsers from "../views/Admin/Users.vue"; // FILE BARU: Import Users
+import AdminOrders from "../views/Admin/Orders.vue";
+import AdminUsers from "../views/Admin/Users.vue";
+import AdminTestimonials from "../views/Admin/Testimonials.vue"; // NEW: Import Admin Testimonials
 
 const routes = [
   // ... (rute customer yang sudah ada)
   { path: "/", component: Home },
-  { path: "/product/:id", component: ProductList },
-  { path: "/testimonials", component: Testimonials },
-  { path: "/contact", component: Contact },
+  { path: "/product/:id", component: ProductDetail },
+  { path: "/testimonials", component: Testimonials }, // Customer Testimonials
+  { path: "/contact", component: Contact }, 
 
   // Rute Customer Terproteksi
   { path: "/cart", component: Cart, meta: { requiresAuth: true } },
@@ -63,6 +64,11 @@ const routes = [
   {
     path: "/admin/users", // Rute untuk manajemen user
     component: AdminUsers,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: "/admin/testimonials", // NEW: Rute untuk manajemen testimoni
+    component: AdminTestimonials,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
 ];

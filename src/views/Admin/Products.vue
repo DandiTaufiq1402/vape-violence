@@ -26,7 +26,7 @@
             <th class="p-3 border-b border-gray-600">ID</th>
             <th class="p-3 border-b border-gray-600">Gambar</th>
             <th class="p-3 border-b border-gray-600">Nama Produk</th>
-            <th class="p-3 border-b border-gray-600">Harga</th>
+            <th class="p-3 border-b border-gray-600">Kategori</th> <th class="p-3 border-b border-gray-600">Harga</th>
             <th class="p-3 border-b border-gray-600">Stok</th>
             <th class="p-3 border-b border-gray-600">Aksi</th>
           </tr>
@@ -47,7 +47,7 @@
               />
             </td>
             <td class="p-3 font-medium text-white">{{ p.name }}</td>
-            <td class="p-3">Rp {{ formatCurrency(p.price) }}</td>
+            <td class="p-3 text-cyan-400 font-semibold">{{ p.categories?.name || 'N/A' }}</td> <td class="p-3">Rp {{ formatCurrency(p.price) }}</td>
             <td class="p-3">{{ p.stock }}</td>
             <td class="p-3 space-x-2 whitespace-nowrap">
               <button
@@ -65,7 +65,7 @@
             </td>
           </tr>
           <tr v-if="products.length === 0 && !loading">
-            <td colspan="6" class="p-4 text-center text-gray-500">
+            <td colspan="7" class="p-4 text-center text-gray-500">
               Tidak ada produk.
             </td>
           </tr>
@@ -89,7 +89,10 @@ export default {
       loading.value = true;
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select(`
+          *,
+          categories (name)
+        `) // NEW: Fetch category name
         .order("id", { ascending: true });
       if (error) {
         console.error("Gagal memuat produk:", error.message);

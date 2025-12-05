@@ -42,6 +42,31 @@
         ></textarea>
       </div>
 
+      <div>
+        <label
+          for="category"
+          class="block text-sm font-medium text-gray-400 mb-1"
+          >Kategori Produk</label
+        >
+        <select
+          id="category"
+          v-model.number="form.category_id"
+          required
+          class="input bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-cyan-500 focus:ring-cyan-500 p-3 appearance-none"
+        >
+          <option :value="0" disabled>Pilih kategori</option>
+          <option
+            v-for="cat in categories"
+            :key="cat.id"
+            :value="cat.id"
+          >
+            {{ cat.name }}
+          </option>
+        </select>
+        <p v-if="!categories.length" class="text-sm text-red-400 mt-1">
+          Tidak dapat memuat kategori. Pastikan tabel 'categories' sudah ada.
+        </p>
+      </div>
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label
@@ -137,15 +162,19 @@ const productId = route.params.id;
 const selectedFile = ref(null);
 const uploading = ref(false);
 
+const categories = ref([]); // NEW: State for categories
+
 const form = ref({
   name: "",
   description: "",
   price: 0,
   stock: 0,
   image_url: "",
+  category_id: 0, // NEW: Add category_id
 });
 
 onMounted(async () => {
+  await fetchCategories(); // NEW: Fetch categories on mount
   if (productId) {
     isEdit.value = true;
     await fetchProduct(productId);
@@ -156,10 +185,19 @@ const handleFileUpload = (event) => {
   selectedFile.value = event.target.files[0];
 };
 
+const fetchCategories = async () => {
+  const { data, error } = await supabase.from("categories").select("id, name");
+  if (error) {
+    console.error("Gagal memuat kategori:", error.message);
+  } else {
+    categories.value = data || [];
+  }
+};
+
 const fetchProduct = async (id) => {
   const { data, error } = await supabase
     .from("products")
-    .select("name, description, price, stock, image_url")
+    .select("name, description, price, stock, image_url, category_id") // NEW: include category_id
     .eq("id", id)
     .single();
 
@@ -206,6 +244,7 @@ const save = async () => {
       price: form.value.price,
       stock: form.value.stock,
       image_url: imageUrl,
+      category_id: form.value.category_id, // NEW: Include category_id
     };
 
     let error;

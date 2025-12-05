@@ -21,11 +21,11 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
       <router-link to="/product/1" class="hover:text-yellow-500 transition"
         >Product</router-link
       >
+      <router-link to="/testimonials" class="hover:text-yellow-500 transition"
+        >Testimoni</router-link
+      >
       <router-link to="/contact" class="hover:text-yellow-500 transition"
         >Contact</router-link
-      >
-      <router-link to="/testimonials" class="hover:text-yellow-500 transition"
-        >Testimonials</router-link
       >
 
       <router-link
