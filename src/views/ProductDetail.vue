@@ -20,27 +20,21 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
       </button>
       <button
         @click="filter = 1"
-        :class="
-          filter === 1 ? 'bg-white text-black' : 'bg-gray-800 text-white'
-        "
+        :class="filter === 1 ? 'bg-white text-black' : 'bg-gray-800 text-white'"
         class="px-6 py-2 rounded-lg font-semibold transition border border-gray-700 hover:bg-gray-700"
       >
         Device
       </button>
       <button
         @click="filter = 2"
-        :class="
-          filter === 2 ? 'bg-white text-black' : 'bg-gray-800 text-white'
-        "
+        :class="filter === 2 ? 'bg-white text-black' : 'bg-gray-800 text-white'"
         class="px-6 py-2 rounded-lg font-semibold transition border border-gray-700 hover:bg-gray-700"
       >
         Liquid
       </button>
       <button
         @click="filter = 3"
-        :class="
-          filter === 3 ? 'bg-white text-black' : 'bg-gray-800 text-white'
-        "
+        :class="filter === 3 ? 'bg-white text-black' : 'bg-gray-800 text-white'"
         class="px-6 py-2 rounded-lg font-semibold transition border border-gray-700 hover:bg-gray-700"
       >
         Accesories
@@ -51,8 +45,9 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
       <div
         v-for="p in filteredProducts"
         :key="p.id"
-        class="uiverse-card mx-auto"
+        class="uiverse-card large mx-auto"
       >
+      
         <div class="uiverse-blob"></div>
         <div class="uiverse-bg p-4 flex flex-col">
           <img
@@ -64,6 +59,9 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
           <h2 class="text-xl font-bold mb-1 text-cyan-400 truncate">
             {{ p.name }}
           </h2>
+          <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">
+            {{ p.name }}
+          </p>
           <div class="flex items-center text-sm text-yellow-500 mb-2">
             <span v-if="p.avg_rating"
               >{{ "⭐".repeat(p.avg_rating) }} ({{ p.ratingCount }})</span
@@ -81,7 +79,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
             Tambah Produk
           </button>
           <router-link
-            :to="`/product/detail/${p.id}`"
+            :to="`/product/${p.id}`"
             class="w-full bg-white text-black py-2 rounded-lg font-semibold hover:bg-gray-200 transition text-center"
           >
             Lihat Detail
@@ -97,39 +95,43 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
     </div>
 
     <section class="mt-12">
-        <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">
-            Apa Kata Pelanggan?
-        </h2>
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">
+        Apa Kata Pelanggan?
+      </h2>
+      <div
+        v-if="testimonials.length"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
         <div
-          v-if="testimonials.length"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          v-for="t in testimonials.slice(0, 3)"
+          :key="t.id"
+          class="bg-gray-800 p-5 rounded-xl border border-gray-700"
         >
-            <div 
-                v-for="t in testimonials.slice(0, 3)" 
-                :key="t.id"
-                class="bg-gray-800 p-5 rounded-xl border border-gray-700"
-            >
-                <div class="flex justify-between items-center mb-2">
-                    <span class="font-bold text-white">{{ t.users?.full_name || 'Anonymous' }}</span>
-                    <span class="text-yellow-400 font-bold text-sm">
-                        {{ '⭐'.repeat(t.rating) }}
-                    </span>
-                </div>
-                <p class="text-sm text-gray-400 italic line-clamp-3">
-                    "{{ t.testimony_content }}"
-                </p>
-                <p class="text-xs text-gray-500 mt-2">({{ formatDate(t.created_at) }})</p>
-            </div>
+          <div class="flex justify-between items-center mb-2">
+            <span class="font-bold text-white">{{
+              t.users?.full_name || "Anonymous"
+            }}</span>
+            <span class="text-yellow-400 font-bold text-sm">
+              {{ "⭐".repeat(t.rating) }}
+            </span>
+          </div>
+          <p class="text-sm text-gray-400 italic line-clamp-3">
+            "{{ t.testimony_content }}"
+          </p>
+          <p class="text-xs text-gray-500 mt-2">
+            ({{ formatDate(t.created_at) }})
+          </p>
         </div>
-        <div v-else class="text-center text-gray-500 py-10">
-          Belum ada testimoni dari pelanggan.
-        </div>
-        <router-link
-          to="/testimonials"
-          class="block text-center mt-6 text-cyan-400 hover:text-cyan-300 font-semibold"
-        >
-            Lihat semua ulasan dan riwayat Anda...
-        </router-link>
+      </div>
+      <div v-else class="text-center text-gray-500 py-10">
+        Belum ada testimoni dari pelanggan.
+      </div>
+      <router-link
+        to="/testimonials"
+        class="block text-center mt-6 text-cyan-400 hover:text-cyan-300 font-semibold"
+      >
+        Lihat semua ulasan dan riwayat Anda...
+      </router-link>
     </section>
 
     <div
@@ -137,7 +139,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
     >
       <div class="text-lg font-bold text-white mb-1">
         <span class="mr-2">🚚</span> Gratis Ongkir untuk pembelian di atas Rp
-        999.000
+        1.000.000
       </div>
       <p class="text-gray-400 text-sm">Berlaku di seluruh daerah Jabodetabek</p>
     </div>
@@ -145,7 +147,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
 </template>
 
 <script>
-import { supabase } from "../lib/supabase"; 
+import { supabase } from "../lib/supabase";
 
 export default {
   name: "ProductList",
@@ -159,7 +161,7 @@ export default {
 
   async mounted() {
     await this.loadProducts();
-    await this.loadTestimonials(); 
+    await this.loadTestimonials();
   },
 
   methods: {
@@ -189,17 +191,18 @@ export default {
 
       // Process product data to calculate average rating
       this.productsData = data.map((p) => {
-        const ratings = p.testimonials.map(t => t.rating);
+        const ratings = p.testimonials.map((t) => t.rating);
         const ratingCount = ratings.length;
         const totalRating = ratings.reduce((sum, r) => sum + r, 0);
-        const avg_rating = ratingCount > 0 ? Math.round(totalRating / ratingCount) : 0;
-        
+        const avg_rating =
+          ratingCount > 0 ? Math.round(totalRating / ratingCount) : 0;
+
         return {
           id: p.id,
           name: p.name,
           price: p.price,
           image: p.image_url,
-          category_id: p.category_id, 
+          category_id: p.category_id,
           category_name: p.categories?.name || "N/A",
           ratingCount: ratingCount,
           avg_rating: avg_rating,
@@ -208,12 +211,14 @@ export default {
     },
 
     async loadTestimonials() {
-       const { data, error } = await supabase
+      const { data, error } = await supabase
         .from("testimonials")
-        .select(`
+        .select(
+          `
           *,
           users(full_name)
-        `)
+        `
+        )
         .order("created_at", { ascending: false })
         .limit(3);
 

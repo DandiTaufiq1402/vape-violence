@@ -153,7 +153,7 @@
     <div class="mt-8 pt-4 border-t border-gray-700 text-center">
       <div class="text-2xl font-bold text-gray-300 mb-2">
         <span class="text-yellow-500">Gratis Ongkir</span> untuk pembelian di
-        atas Rp 999.000
+        atas Rp 1.000.000
       </div>
       <p class="text-gray-500">Berlaku di seluruh daerah Jabodetabek</p>
     </div>
@@ -209,7 +209,7 @@ export default {
       paymentMethod: "",
       isProcessing: false,
       showSuccessPopup: false,
-      freeShippingThreshold: 999000,
+      freeShippingThreshold: 1000000,
       baseShippingFee: 18900,
       currentUser: null,
     };

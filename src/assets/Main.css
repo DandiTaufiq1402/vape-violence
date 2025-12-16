@@ -31,6 +31,10 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.uiverse-card.large {
+  height: 400px; /* Ukuran khusus untuk halaman katalog yang isinya banyak */
+}
+
 .uiverse-card:hover {
   transform: scale(1.03);
   box-shadow: 10px 10px 40px rgba(0, 0, 0, 0.8),
