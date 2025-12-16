@@ -1,7 +1,3 @@
-/*
-danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829ba4f/src/views/Home.vue
-*/
-
 <template>
   <div class="min-h-screen bg-black text-white">
     <header class="py-20 lg:py-32 border-b border-gray-800">
@@ -56,7 +52,10 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
           Latest Products
         </h2>
 
+        <div v-if="loading" class="text-center text-gray-500">Memuat produk...</div>
+        
         <div
+          v-else
           class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8"
         >
           <div v-for="p in products" :key="p.id" class="uiverse-card">
@@ -73,7 +72,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
               </div>
 
               <span class="text-xs text-yellow-400 font-semibold mb-1">{{
-                p.type
+                p.categories?.name || 'Vape'
               }}</span>
               <h3 class="font-extrabold text-xl truncate text-cyan-200">
                 {{ p.name }}
@@ -86,7 +85,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
                 :to="`/product/${p.id}`"
                 class="block mt-auto bg-cyan-600 text-gray-900 text-center py-2 rounded-lg font-bold hover:bg-cyan-700 transition duration-300"
               >
-                Lihat Spesifikasi
+                Lihat Detail
               </router-link>
             </div>
           </div>
@@ -96,93 +95,59 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
 
     <section class="py-16 bg-black border-t border-gray-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-4xl font-bold text-center mb-10">Testimonials</h2>
+        <h2 class="text-4xl font-bold text-center mb-10">Apa Kata Mereka?</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div v-if="testimonials.length === 0" class="text-center text-gray-500 mb-16">
+           Belum ada testimoni. Jadilah yang pertama mereview!
+        </div>
+
+        <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
           <div
-            v-for="t in limitedTestimonials"
-            :key="t.name"
-            class="bg-gray-900 p-4 rounded-xl border border-gray-800 shadow-lg"
+            v-for="t in testimonials"
+            :key="t.id"
+            class="bg-gray-900 p-6 rounded-xl border border-gray-800 shadow-lg hover:border-cyan-500 transition"
           >
-            <div class="flex items-center mb-3">
-              <svg
-                class="w-12 h-12 text-cyan-400 mr-4 border-2 border-cyan-500 rounded-full p-2 bg-gray-700"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                ></path>
-              </svg>
+            <div class="flex items-center mb-4">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-black font-bold text-xl mr-4">
+                 {{ t.users?.full_name?.charAt(0).toUpperCase() || 'U' }}
+              </div>
               <div>
-                <h3 class="font-bold text-lg text-white">{{ t.name }}</h3>
-                <p class="text-sm text-yellow-500">{{ t.role }}</p>
+                <h3 class="font-bold text-lg text-white">{{ t.users?.full_name || 'Customer' }}</h3>
+                <p class="text-sm text-cyan-400 font-semibold">{{ t.products?.name }}</p>
+                <div class="text-yellow-500 text-xs mt-1">{{ '⭐'.repeat(t.rating) }}</div>
               </div>
             </div>
-            <p class="text-gray-400 text-sm italic line-clamp-3">
-              "{{ t.testimony }}"
+            <p class="text-gray-300 text-sm italic line-clamp-4 leading-relaxed">
+              "{{ t.testimony_content }}"
             </p>
           </div>
         </div>
 
-        <h2 class="text-4xl font-bold text-center mb-10">Contact</h2>
+        <div class="text-center mb-16">
+           <router-link to="/testimonials" class="text-yellow-500 hover:text-yellow-400 font-bold border-b-2 border-yellow-500 pb-1">
+              Lihat Semua Testimoni
+           </router-link>
+        </div>
 
+        <h2 class="text-4xl font-bold text-center mb-10">Contact</h2>
         <div class="flex flex-wrap justify-center">
           <div
             class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-gray-900 p-8 rounded-xl border border-gray-700 shadow-xl"
           >
             <form @submit.prevent="submitContact">
               <div class="mb-4">
-                <label
-                  for="name"
-                  class="block text-sm font-medium text-gray-400 mb-1"
-                  >Nama</label
-                >
-                <input
-                  type="text"
-                  id="name"
-                  placeholder="Masukkan nama anda"
-                  class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500"
-                  required
-                />
+                <label class="block text-sm font-medium text-gray-400 mb-1">Nama</label>
+                <input type="text" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500" required />
               </div>
               <div class="mb-4">
-                <label
-                  for="phone"
-                  class="block text-sm font-medium text-gray-400 mb-1"
-                  >No. Telp</label
-                >
-                <input
-                  type="tel"
-                  id="phone"
-                  placeholder="Masukkan no telepon anda"
-                  class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500"
-                  required
-                />
+                <label class="block text-sm font-medium text-gray-400 mb-1">No. Telp</label>
+                <input type="tel" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500" required />
               </div>
               <div class="mb-6">
-                <label
-                  for="description"
-                  class="block text-sm font-medium text-gray-400 mb-1"
-                  >Deskripsi</label
-                >
-                <textarea
-                  id="description"
-                  rows="3"
-                  placeholder="Masukkan deskripsi anda"
-                  class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500"
-                ></textarea>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Pesan</label>
+                <textarea rows="3" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500"></textarea>
               </div>
-
-              <button
-                type="submit"
-                class="w-full bg-white text-black py-3 rounded-lg font-bold hover:bg-gray-200 transition"
-              >
+              <button type="submit" class="w-full bg-white text-black py-3 rounded-lg font-bold hover:bg-gray-200 transition">
                 Kirim
               </button>
             </form>
@@ -190,122 +155,54 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
         </div>
       </div>
     </section>
-    <footer class="bg-black border-t border-gray-800 py-8">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="text-center mb-8">
-          <p class="text-white text-lg font-bold">
-            <span class="mr-2">🚚</span> Gratis Ongkir untuk pembelian di atas
-            Rp 1.000.000
-          </p>
-          <p class="text-gray-400 text-sm">
-            Berlaku di seluruh daerah Jabodetabek
-          </p>
-        </div>
 
-        <div class="space-x-8 text-lg mb-4">
-          <router-link to="/" class="text-gray-500 hover:text-white transition"
-            >Home</router-link
-          >
-          <router-link
-            to="/product/1"
-            class="text-gray-500 hover:text-white transition"
-            >Products</router-link
-          >
-          <router-link
-            to="/contact"
-            class="text-gray-500 hover:text-white transition"
-            >Contact</router-link
-          >
-          <router-link
-            to="/testimonials"
-            class="text-gray-500 hover:text-white transition"
-            >Testimonials</router-link
-          >
-        </div>
-
-        <div class="space-x-4 text-xl mb-4">
-          <a href="#" class="text-gray-500 hover:text-white transition">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" class="text-gray-500 hover:text-white transition">
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a href="#" class="text-gray-500 hover:text-white transition">
-            <i class="fab fa-github"></i>
-          </a>
-        </div>
-
-        <p class="text-gray-500 text-sm mt-4">
-          &copy; Copyright 2025, All Rights Reserved by Dandi Taufiq.
-        </p>
-      </div>
+    <footer class="bg-black border-t border-gray-800 py-8 text-center">
+        <p class="text-gray-500 text-sm">&copy; 2025 Violet Vape Store. All Rights Reserved.</p>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { supabase } from "../lib/supabase";
 
-// TESTIMONIALS (tetap sama)
-const DUMMY_TESTIMONIALS = [
-  {
-    name: "Dandi Taufiq",
-    role: "Tester",
-    testimony:
-      "Rasa liquid Red Velvet ini *smooth* banget, cocok buat *vaping* harian.",
-  },
-  {
-    name: "Felan Ardenta Yoga Adiyatama",
-    role: "Tester",
-    testimony:
-      "Mod Centaurus Edisi Khusus ini desainnya keren parah! Chipsetnya responsif.",
-  },
-  {
-    name: "Evan Alpha Edison",
-    role: "Tester",
-    testimony:
-      "Cotton Bacon-nya memang beda, kapas menyerap liquid cepat dan bersih.",
-  },
-  {
-    name: "Vargas Cahyadi",
-    role: "Tester",
-    testimony:
-      "Liquid Salt Nic Mint Freeze ini dinginnya pas banget! Fresh dan smooth.",
-  },
-];
-
-const limitedTestimonials = computed(() => DUMMY_TESTIMONIALS.slice(0, 3));
-
-// DATA PRODUK DARI SUPABASE
 const products = ref([]);
+const testimonials = ref([]);
+const loading = ref(true);
 
 onMounted(async () => {
-  const { data, error } = await supabase
-    .from("products")                // TABEL PRODUK KAMU
-    .select("*")
-    .order("created_at", { ascending: false }) // SORT NEWEST FIRST
-    .limit(10);                               // LIMIT 10
+  loading.value = true;
 
-  if (error) {
-    console.error("Gagal ambil produk:", error);
-    return;
+  // 1. Load Produk Terbaru (Limit 5)
+  const { data: prodData } = await supabase
+    .from("products")
+    .select("*, categories(name)")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  if (prodData) products.value = prodData;
+
+  // 2. Load Testimoni Terbaru (Limit 3) - Untuk Public
+  const { data: testiData, error } = await supabase
+    .from("testimonials")
+    .select(`
+      id, rating, testimony_content,
+      users (full_name),
+      products (name)
+    `)
+    .order("created_at", { ascending: false })
+    .limit(3);
+
+  if (testiData) {
+     testimonials.value = testiData;
+  } else if (error) {
+     console.error("Gagal load testimoni home:", error);
   }
 
-  products.value = data;
+  loading.value = false;
 });
 
-// Fungsi dummy form
 const submitContact = () => {
   alert("Pesan Anda berhasil dikirim!");
 };
 </script>
-
-
-<style scoped>
-/* Tambahan styling untuk memastikan input di Contact section terlihat benar di tema gelap */
-.input {
-  background-color: #000 !important; /* Latar belakang hitam untuk input di Contact */
-  border-color: #4b5563 !important; /* border abu-abu */
-}
-</style>
