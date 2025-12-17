@@ -47,7 +47,6 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
         :key="p.id"
         class="uiverse-card large mx-auto"
       >
-      
         <div class="uiverse-blob"></div>
         <div class="uiverse-bg p-4 flex flex-col">
           <img
@@ -59,9 +58,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
           <h2 class="text-xl font-bold mb-1 text-cyan-400 truncate">
             {{ p.name }}
           </h2>
-          <p class="text-xs text-gray-400 mb-2 uppercase tracking-wide">
-            {{ p.name }}
-          </p>
+
           <div class="flex items-center text-sm text-yellow-500 mb-2">
             <span v-if="p.avg_rating"
               >{{ "⭐".repeat(p.avg_rating) }} ({{ p.ratingCount }})</span
