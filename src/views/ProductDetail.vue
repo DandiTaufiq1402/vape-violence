@@ -1,7 +1,3 @@
-/*
-danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829ba4f/src/views/ProductDetail.vue
-*/
-
 <template>
   <div class="p-6 max-w-7xl mx-auto bg-black text-white min-h-screen">
     <h1 class="text-3xl font-extrabold text-center mb-8 text-yellow-500">
@@ -11,9 +7,7 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
     <div class="flex justify-center space-x-4 mb-10">
       <button
         @click="filter = 'All'"
-        :class="
-          filter === 'All' ? 'bg-white text-black' : 'bg-gray-800 text-white'
-        "
+        :class="filter === 'All' ? 'bg-white text-black' : 'bg-gray-800 text-white'"
         class="px-6 py-2 rounded-lg font-semibold transition border border-gray-700 hover:bg-gray-700"
       >
         All
@@ -140,19 +134,36 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
       </div>
       <p class="text-gray-400 text-sm">Berlaku di seluruh daerah Jabodetabek</p>
     </div>
+
+    <SuccessPopup 
+      :visible="showPopup" 
+      :title="popupTitle"
+      :message="popupMessage"
+      @close="showPopup = false"
+    />
   </div>
 </template>
 
 <script>
 import { supabase } from "../lib/supabase";
+// 2. IMPORT KOMPONEN
+import SuccessPopup from "../components/SuccessPopup.vue";
 
 export default {
   name: "ProductList",
+  // 3. REGISTRASI KOMPONEN
+  components: {
+    SuccessPopup
+  },
   data() {
     return {
       filter: "All",
       productsData: [],
-      testimonials: [], // NEW: for displaying generic testimonials
+      testimonials: [],
+      // 4. TAMBAHKAN DATA STATE UNTUK POPUP
+      showPopup: false,
+      popupTitle: "",
+      popupMessage: ""
     };
   },
 
@@ -178,7 +189,7 @@ export default {
             categories (name),
             testimonials(rating)
           `
-        ) // Fetch category name and ratings
+        )
         .order("id", { ascending: true });
 
       if (error) {
@@ -186,7 +197,6 @@ export default {
         return;
       }
 
-      // Process product data to calculate average rating
       this.productsData = data.map((p) => {
         const ratings = p.testimonials.map((t) => t.rating);
         const ratingCount = ratings.length;
@@ -246,14 +256,17 @@ export default {
       }
 
       localStorage.setItem("user_cart", JSON.stringify(cart));
-      alert(`${product.name} telah ditambahkan ke keranjang!`);
+      
+      // 5. GANTI ALERT DENGAN KODE POPUP INI
+      this.popupTitle = "Berhasil!";
+      this.popupMessage = `"${product.name}" telah ditambahkan ke keranjang belanja Anda.`;
+      this.showPopup = true;
     },
   },
 
   computed: {
     filteredProducts() {
       if (this.filter === "All") return this.productsData;
-      // Filter by category_id (numeric comparison now works)
       return this.productsData.filter((p) => p.category_id === this.filter);
     },
   },

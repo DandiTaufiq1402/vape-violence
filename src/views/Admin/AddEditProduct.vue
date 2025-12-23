@@ -1,5 +1,3 @@
-// src/views/Admin/AddEditProduct.vue
-
 <template>
   <div
     class="p-6 bg-gray-900 min-h-[calc(100vh-64px)] text-white max-w-2xl mx-auto"
@@ -63,10 +61,8 @@
             {{ cat.name }}
           </option>
         </select>
-        <p v-if="!categories.length" class="text-sm text-red-400 mt-1">
-          Tidak dapat memuat kategori. Pastikan tabel 'categories' sudah ada.
-        </p>
       </div>
+
       <div class="grid grid-cols-2 gap-4">
         <div>
           <label
@@ -123,12 +119,6 @@
             >Lihat Gambar</a
           >
         </div>
-        <p v-if="!form.image_url && isEdit" class="text-sm text-red-400 mt-1">
-          Harap unggah ulang gambar jika ingin diubah.
-        </p>
-        <p v-if="uploading" class="text-sm text-cyan-400 mt-1">
-          Mengunggah gambar...
-        </p>
       </div>
 
       <button
@@ -147,6 +137,14 @@
         Batal
       </button>
     </form>
+
+    <SuccessPopup 
+      :visible="showPopup" 
+      :title="popupTitle"
+      :message="popupMessage"
+      @close="handlePopupClose"
+    />
+
   </div>
 </template>
 
@@ -154,6 +152,8 @@
 import { supabase } from "../../lib/supabase";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+// 1. IMPORT KOMPONEN POPUP
+import SuccessPopup from "../../components/SuccessPopup.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -162,7 +162,12 @@ const productId = route.params.id;
 const selectedFile = ref(null);
 const uploading = ref(false);
 
-const categories = ref([]); // NEW: State for categories
+const categories = ref([]);
+
+// 2. STATE UNTUK POPUP
+const showPopup = ref(false);
+const popupTitle = ref("");
+const popupMessage = ref("");
 
 const form = ref({
   name: "",
@@ -170,11 +175,11 @@ const form = ref({
   price: 0,
   stock: 0,
   image_url: "",
-  category_id: 0, // NEW: Add category_id
+  category_id: 0,
 });
 
 onMounted(async () => {
-  await fetchCategories(); // NEW: Fetch categories on mount
+  await fetchCategories();
   if (productId) {
     isEdit.value = true;
     await fetchProduct(productId);
@@ -187,17 +192,13 @@ const handleFileUpload = (event) => {
 
 const fetchCategories = async () => {
   const { data, error } = await supabase.from("categories").select("id, name");
-  if (error) {
-    console.error("Gagal memuat kategori:", error.message);
-  } else {
-    categories.value = data || [];
-  }
+  if (!error) categories.value = data || [];
 };
 
 const fetchProduct = async (id) => {
   const { data, error } = await supabase
     .from("products")
-    .select("name, description, price, stock, image_url, category_id") // NEW: include category_id
+    .select("name, description, price, stock, image_url, category_id")
     .eq("id", id)
     .single();
 
@@ -214,22 +215,14 @@ const save = async () => {
   let imageUrl = form.value.image_url;
 
   try {
-    // 1. Proses Unggah Gambar jika ada file baru
     if (selectedFile.value) {
       const file = selectedFile.value;
       const fileName = `${Date.now()}_${file.name}`;
-
-      // Ganti nama bucket sesuai yang Anda buat di Supabase Storage, misal 'images'
       const { error: uploadError } = await supabase.storage
         .from("images")
-        .upload(fileName, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+        .upload(fileName, file, { cacheControl: "3600", upsert: false });
 
-      if (uploadError) {
-        throw new Error("Upload Gagal: " + uploadError.message);
-      }
+      if (uploadError) throw new Error("Upload Gagal: " + uploadError.message);
 
       const { data: urlData } = supabase.storage
         .from("images")
@@ -237,45 +230,47 @@ const save = async () => {
       imageUrl = urlData.publicUrl;
     }
 
-    // 2. Siapkan Payload untuk Database
     const payload = {
       name: form.value.name,
       description: form.value.description,
       price: form.value.price,
       stock: form.value.stock,
       image_url: imageUrl,
-      category_id: form.value.category_id, // NEW: Include category_id
+      category_id: form.value.category_id,
     };
 
     let error;
     if (isEdit.value) {
-      // Update produk
       const response = await supabase
         .from("products")
         .update(payload)
         .eq("id", productId);
       error = response.error;
     } else {
-      // Tambah produk baru
       const response = await supabase.from("products").insert(payload);
       error = response.error;
     }
 
-    if (error) {
-      throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
 
-    alert(
-      isEdit.value
-        ? "Produk berhasil diupdate!"
-        : "Produk baru berhasil ditambahkan!"
-    );
-    router.push("/admin/products");
+    // 3. TAMPILKAN POPUP SUKSES (Gantikan alert)
+    popupTitle.value = isEdit.value ? "Update Berhasil" : "Produk Ditambahkan";
+    popupMessage.value = isEdit.value 
+        ? `Produk "${form.value.name}" berhasil diperbarui.`
+        : `Produk "${form.value.name}" telah ditambahkan ke katalog.`;
+    showPopup.value = true;
+
   } catch (e) {
-    alert(e.message);
+    alert(e.message); // Gunakan alert biasa untuk error
     console.error(e);
   } finally {
     uploading.value = false;
   }
+};
+
+// 4. HANDLE KETIKA TOMBOL OK DI POPUP DITEKAN
+const handlePopupClose = () => {
+  showPopup.value = false;
+  router.push("/admin/products");
 };
 </script>
