@@ -1,23 +1,31 @@
-/*
-danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829ba4f/src/views/Contact.vue
-*/
-
+<!-- src/views/Contact.vue -->
 <template>
   <div class="min-h-screen bg-black text-white p-6">
     <div class="max-w-5xl mx-auto py-12">
-      <h1 class="text-3xl font-extrabold text-center mb-10 text-white">
+      <h1 class="text-3xl font-extrabold text-center mb-10">
         Contact
       </h1>
 
+      <!-- Contact Section -->
       <section>
-        <div class="bg-gray-900 rounded-xl p-0 shadow-2xl overflow-hidden flex">
+        <div
+          class="bg-gray-900 rounded-xl shadow-2xl overflow-hidden flex flex-col md:flex-row"
+        >
+          <!-- Left Image -->
           <div
-            class="hidden md:block w-1/2 bg-cover bg-center h-auto min-h-[500px]"
+            class="hidden md:flex w-1/2 bg-cover bg-center min-h-[500px] items-center justify-center"
             style="background-image: url('/img/contact-side.jpg')"
-          ></div>
+          >
+            <img
+              src="/vite.svg"
+              alt="Logo Vape Store"
+              class="w-64 h-64 lg:w-80 lg:h-80 object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]"
+            />
+          </div>
 
+          <!-- Right Form -->
           <div class="w-full md:w-1/2 p-10">
-            <h2 class="text-3xl font-bold mb-8 text-center text-white">
+            <h2 class="text-3xl font-bold mb-8 text-center">
               Contact
             </h2>
 
@@ -26,8 +34,9 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
                 <label
                   for="name"
                   class="block text-sm font-semibold text-gray-400 mb-1"
-                  >Nama</label
                 >
+                  Nama
+                </label>
                 <input
                   id="name"
                   type="text"
@@ -40,8 +49,9 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
                 <label
                   for="email"
                   class="block text-sm font-semibold text-gray-400 mb-1"
-                  >Email</label
                 >
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
@@ -54,8 +64,9 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
                 <label
                   for="telp"
                   class="block text-sm font-semibold text-gray-400 mb-1"
-                  >No. Telp</label
                 >
+                  No. Telp
+                </label>
                 <input
                   id="telp"
                   type="tel"
@@ -68,8 +79,9 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
                 <label
                   for="deskripsi"
                   class="block text-sm font-semibold text-gray-400 mb-1"
-                  >Deskripsi</label
                 >
+                  Deskripsi
+                </label>
                 <textarea
                   id="deskripsi"
                   rows="4"
@@ -89,10 +101,10 @@ danditaufiq1402/vape-violence/vape-violence-4cbd0ad96d9540541e48100e68d1308e5829
         </div>
       </section>
 
+      <!-- Footer Promo -->
       <div class="mt-12 pt-4 border-t border-gray-700 text-center bg-black p-4">
-        <div class="text-lg font-bold text-white mb-1">
-          <span class="mr-2">🚚</span> Gratis Ongkir untuk pembelian di atas Rp
-          999.000
+        <div class="text-lg font-bold mb-1">
+          🚚 Gratis Ongkir untuk pembelian di atas Rp 1.000.000
         </div>
         <p class="text-gray-400 text-sm">
           Berlaku di seluruh daerah Jabodetabek
@@ -107,10 +119,3 @@ export default {
   name: "Contact",
 };
 </script>
-
-<style scoped>
-/* Placeholder style for contact image */
-.min-h-\[500px\] {
-  min-height: 500px;
-}
-</style>

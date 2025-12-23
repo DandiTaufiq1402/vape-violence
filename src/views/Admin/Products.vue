@@ -8,7 +8,7 @@
 
     <button
       class="mb-6 bg-cyan-600 text-black px-4 py-2 rounded-lg font-bold hover:bg-cyan-700 transition"
-      @click="$router.push('/admin/products/add')"
+      @click="handleAddProduct"
     >
       <i class="fas fa-plus mr-2"></i> Tambah Produk
     </button>
@@ -78,12 +78,25 @@
 <script>
 import { ref, onMounted } from "vue";
 import { supabase } from "../../lib/supabase";
+import { useRouter } from "vue-router"; //
+import { getCurrentUser } from "../../lib/Auth";
 
 export default {
   name: "AdminProducts",
   setup() {
     const products = ref([]);
     const loading = ref(true);
+    const router = useRouter();
+
+    const handleAddProduct = async () => {
+      const user = await getCurrentUser();
+      
+      if (!user) {
+        alert("Harap login terlebih dahulu"); // Notifikasi jika belum login
+      } else {
+        router.push('/admin/products/add'); // Lanjut jika sudah login
+      }
+    };
 
     const fetchProducts = async () => {
       loading.value = true;
@@ -125,7 +138,7 @@ export default {
       fetchProducts();
     });
 
-    return { products, deleteProduct, formatCurrency, loading };
+    return { products, deleteProduct, formatCurrency, loading, handleAddProduct };
   },
 };
 </script>

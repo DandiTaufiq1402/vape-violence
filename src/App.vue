@@ -57,46 +57,52 @@
   </div>
 </template>
 
+// src/App.vue
+
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import Navbar from "./components/Navbar.vue";
 import AdminSidebar from "./components/AdminSidebar.vue";
+import { getCurrentUser } from "./lib/Auth"; // Pastikan import ini ada
 
 const route = useRoute();
 const showAgeGate = ref(false);
 
-// Cek Rute Admin
 const isAdminRoute = computed(() => {
   return route.path.startsWith("/admin");
 });
 
 // LOGIKA POPUP 18+
-onMounted(() => {
-  // Cek apakah di localStorage sudah ada penanda 'age_verified'
-  const isVerified = localStorage.getItem("age_verified");
+onMounted(async () => {
+  // 1. Cek apakah user sudah login
+  const user = await getCurrentUser();
 
-  // Jika BELUM ada, tampilkan popup
+  // 2. Jika SUDAH login, jangan tampilkan popup (return)
+  if (user) {
+    showAgeGate.value = false;
+    return;
+  }
+
+  // 3. Jika BELUM login, cek sessionStorage (bukan localStorage)
+  // sessionStorage akan hilang jika browser ditutup, jadi popup muncul lagi saat masuk web baru
+  const isVerified = sessionStorage.getItem("age_verified");
+
   if (!isVerified) {
     showAgeGate.value = true;
-    // Matikan scroll pada body saat popup muncul
     document.body.style.overflow = 'hidden';
   }
 });
 
 const confirmAge = () => {
-  // Simpan penanda ke localStorage
-  localStorage.setItem("age_verified", "true");
+  // Simpan ke sessionStorage (Hanya untuk sesi ini)
+  sessionStorage.setItem("age_verified", "true");
   
-  // Sembunyikan popup
   showAgeGate.value = false;
-  
-  // Hidupkan kembali scroll
   document.body.style.overflow = 'auto';
 };
 
 const denyAge = () => {
-  // Jika menolak, arahkan ke Google atau situs lain
   window.location.href = "https://www.google.com";
 };
 </script>

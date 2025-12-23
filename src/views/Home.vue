@@ -130,9 +130,18 @@
         </div>
 
         <h2 class="text-4xl font-bold text-center mb-10">Contact</h2>
-        <div class="flex flex-wrap justify-center">
+        <div class="flex flex-wrap items-center justify-center gap-8 lg:gap-16">
+          
+          <div class="w-full md:w-1/3 flex justify-center">
+             <img 
+               src="/vite.svg" 
+               alt="Logo Vape Store" 
+               class="w-64 h-64 lg:w-80 lg:h-80 object-contain drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]"
+             />
+          </div>
+
           <div
-            class="w-full md:w-3/4 lg:w-2/3 xl:w-1/2 bg-gray-900 p-8 rounded-xl border border-gray-700 shadow-xl"
+            class="w-full md:w-1/2 bg-gray-900 p-8 rounded-xl border border-gray-700 shadow-xl"
           >
             <form @submit.prevent="submitContact">
               <div class="mb-4">
@@ -140,20 +149,25 @@
                 <input type="text" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500" required />
               </div>
               <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-400 mb-1">No. Telp</label>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Email</label>
                 <input type="tel" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500" required />
               </div>
               <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-400 mb-1">Pesan</label>
+                <label class="block text-sm font-medium text-gray-400 mb-1">No. Telp</label>
+                <textarea rows="3" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500"></textarea>
+              </div> 
+              <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-400 mb-1">Deskripsi</label>
                 <textarea rows="3" class="input w-full bg-black text-white p-3 rounded-lg border border-gray-600 focus:border-cyan-500"></textarea>
               </div>
+              
               <button type="submit" class="w-full bg-white text-black py-3 rounded-lg font-bold hover:bg-gray-200 transition">
                 Kirim
               </button>
             </form>
           </div>
         </div>
-      </div>
+        </div>
     </section>
 
     <footer class="bg-black border-t border-gray-800 py-8 text-center">

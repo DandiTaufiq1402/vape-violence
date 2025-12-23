@@ -33,7 +33,7 @@
 
 .uiverse-card.large {
   height: 400px; /* Ukuran khusus untuk halaman katalog yang isinya banyak */
-}
+} 
 
 .uiverse-card:hover {
   transform: scale(1.03);
