@@ -62,7 +62,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import Navbar from "./components/Navbar.vue";
+import Navbar from "./components/navbar.vue";
 import AdminSidebar from "./components/AdminSidebar.vue";
 import { getCurrentUser } from "./lib/Auth"; // Pastikan import ini ada
 
